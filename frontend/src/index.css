@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Hiệu ứng hover dòng bảng mượt mà bằng phần cứng máy tính */
+.order-row-hover:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Xóa bỏ đường viền đen đậm mặc định của bảng */
+table, th, td {
+  border: none !important;
+}
+
+/* Thêm đường kẻ ngang mờ nhẹ giữa các hàng cho dễ nhìn (giống giao diện cũ) */
+th, td {
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 10px 8px;
+}
