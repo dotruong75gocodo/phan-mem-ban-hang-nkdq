@@ -59,13 +59,10 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
   dateStrings: true
 });
-
-
 db.connect((err) => {
   if (err) console.error('❌ Kết nối database thất bại:', err.message);
   else console.log('✅ Đã kết nối thành công tới database MySQL (quan_ly_ban_hang)');
 });
-
 
 
 // ==========================================================
