@@ -308,14 +308,41 @@ useEffect(() => {
         // 3. Reset lại chỉ số hàng vật tư đang tương tác về trống
         setEditingRowIndex(null);
       }
+
+// NHẤN F2 ĐỂ MỞ NHANH POPUP THÊM SẢN PHẨM (BỔ SUNG MỚI)
+    if (event.key === 'F2') {
+      event.preventDefault(); 
+      setShowAddPopup(true); 
+    }
+
+ // 🌟 ĐOẠN 2: XỬ LÝ PHÍM ENTER THÔNG MINH THEO TỪNG VÙNG
+      if (event.key === 'Enter') {
+        // Nhánh A: Nếu đang bật Popup Thêm -> Enter sẽ lưu dòng vật tư đó
+        if (showAddPopup) {
+          event.preventDefault();
+          handleConfirmPopupAndSave();
+        } 
+        // Nhánh B: Nếu đang bật Popup Sửa -> Enter sẽ lưu dòng đang sửa
+        else if (showEditPopup) {
+          event.preventDefault();
+          handleSaveEditPopupAndSave();
+        }
+        // Nhánh C: Ở TRANG CHÍNH (Tất cả popup đều đóng) -> Enter sẽ LƯU TOÀN BỘ ĐƠN HÀNG
+        else if (!showAddPopup && !showEditPopup && !showCopyPopup) {
+          event.preventDefault();
+          handleSaveChanges(); // Gom thành 1 request lưu ngầm xuống MySQL
+        }
+      }
     };
+
+    
 
     document.addEventListener('keydown', handleEscapeKey);
 
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
-  }, [showAddPopup, showEditPopup, showCopyPopup]); // 🌟 QUAN TRỌNG: Nạp các biến popup vào đây để React luôn nhận diện phím Esc khi bật popup
+  }, [showAddPopup, showEditPopup, showCopyPopup,orderDetails, orderInfo,popupItem]); // 🌟 QUAN TRỌNG: Nạp các biến popup vào đây để React luôn nhận diện phím Esc khi bật popup
 
   // 2. Hàm hỗ trợ: Xác định giá bán từ sản phẩm gốc dựa vào phân đoạn khách hàng
   // 🌟 HÀM TÍNH GIÁ MỚI: Sửa bộ lọc ép bốc giá theo phân đoạn customer_slice xịn
@@ -3174,8 +3201,14 @@ const displayProductName = currentProd
   {/* 🌟 PHẦN 1: KHUNG OVERLAY BỌC NGOÀI & TIÊU ĐỀ CỐ ĐỊNH ĐỈNH */}
 {showAddPopup && (
   <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 20000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px' }}>
-    <div style={{ backgroundColor: '#fff', width: '100%', maxWidth: '580px', maxHeight: '95vh', display: 'flex', flexDirection: 'column', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', fontFamily: 'Arial, sans-serif' }}>
-      
+     {/* CHUYỂN ĐỔI: Thay thẻ <div> cũ bằng thẻ <form> và thêm onSubmit */}
+    <form 
+      onSubmit={(e) => {
+        e.preventDefault(); // Ngăn trình duyệt reload lại trang mặc định
+        handleConfirmPopupAndSave(); // Kích hoạt hàm xác nhận & lưu xuống MySQL
+      }}
+      style={{ backgroundColor: '#fff', width: '100%', maxWidth: '580px', maxHeight: '95vh', display: 'flex', flexDirection: 'column', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', fontFamily: 'Arial, sans-serif' }}
+    >  
       {/* Tiêu đề cửa sổ (Khóa chặt bằng flexShrink ở đỉnh trên) */}
       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid #007bff', padding: '15px 20px 10px 20px', flexShrink: 0 }}>
         <h3 style={{ margin: 0, color: '#007bff', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -3380,13 +3413,13 @@ const displayProductName = currentProd
           <button type="button" onClick={handleClosePopupAndReset} style={{ padding: '8px 16px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}>
             Hủy
           </button>
-          <button type="button" onClick={handleConfirmPopupAndSave} style={{ padding: '8px 16px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }}>
+          <button type="submit" style={{ padding: '8px 16px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }}>
             ✅ Xác Nhận & Lưu Đơn
           </button>
         </div>
       </div>
 
-    </div>
+    </form>
   </div>
 )}
 
