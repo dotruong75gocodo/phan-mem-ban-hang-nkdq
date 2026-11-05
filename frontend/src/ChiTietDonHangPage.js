@@ -327,6 +327,10 @@ useEffect(() => {
           event.preventDefault();
           handleSaveEditPopupAndSave();
         }
+        else if (showCopyPopup) {
+    event.preventDefault();
+    handleSaveCopyProduct();
+        }
         // Nhánh C: Ở TRANG CHÍNH (Tất cả popup đều đóng) -> Enter sẽ LƯU TOÀN BỘ ĐƠN HÀNG
         else if (!showAddPopup && !showEditPopup && !showCopyPopup) {
           event.preventDefault();
@@ -342,7 +346,7 @@ useEffect(() => {
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
-  }, [showAddPopup, showEditPopup, showCopyPopup,orderDetails, orderInfo,popupItem]); // 🌟 QUAN TRỌNG: Nạp các biến popup vào đây để React luôn nhận diện phím Esc khi bật popup
+  }, [showAddPopup, showEditPopup, showCopyPopup,orderDetails, orderInfo,popupItem,copyProductData]); // 🌟 QUAN TRỌNG: Nạp các biến popup vào đây để React luôn nhận diện phím Esc khi bật popup
 
   // 2. Hàm hỗ trợ: Xác định giá bán từ sản phẩm gốc dựa vào phân đoạn khách hàng
   // 🌟 HÀM TÍNH GIÁ MỚI: Sửa bộ lọc ép bốc giá theo phân đoạn customer_slice xịn
@@ -2880,8 +2884,13 @@ const displayProductName = currentProd
 {/* ================================================================= */}
 {showCopyPopup && copyProductData && (
   <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 20000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px' }}>
-    <div style={{ backgroundColor: '#fff', width: '100%', maxWidth: '580px', maxHeight: '95vh', display: 'flex', flexDirection: 'column', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', fontFamily: 'Arial, sans-serif' }}>
-      
+    <form 
+      onSubmit={(e) => {
+        e.preventDefault(); // Chặn reload trang mặc định
+        handleSaveCopyProduct(); // Lưu/Copy sản phẩm khi gõ Enter
+      }}
+      style={{ backgroundColor: '#fff', width: '100%', maxWidth: '580px', maxHeight: '95vh', display: 'flex', flexDirection: 'column', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', fontFamily: 'Arial, sans-serif', margin: 0 }}
+    >
       {/* 1. Tiêu đề Popup (Cố định ở đáy trên) */}
       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid #28a745', padding: '15px 20px 10px 20px', flexShrink: 0 }}>
         <h3 style={{ margin: 0, color: '#28a745', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -3020,13 +3029,13 @@ const displayProductName = currentProd
           <button type="button" onClick={() => setShowCopyPopup(false)} style={{ padding: '8px 16px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}>
             Hủy
           </button>
-          <button type="button" onClick={handleSaveCopyProduct} style={{ padding: '8px 16px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }}>
+         <button type="submit" style={{ padding: '8px 16px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }}>
             📥 Copy
           </button>
         </div>
       </div>
 
-    </div>
+   </form>
   </div>
 )}
 
